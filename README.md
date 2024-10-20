@@ -21,7 +21,7 @@ Walrus aggregator and publisher was down during development, so we couldn't stor
 
 ## Demo
 
-TODO: [Insert demo video link here]
+TODO: https://www.loom.com/share/fe2a1243a92044f38e15646d6e6ba98f?sid=96087e60-e8d7-46bc-88e1-f2b4a10799a3
 
 ## Future Improvements
 
