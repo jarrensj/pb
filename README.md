@@ -2,6 +2,8 @@
 
 Photo Booth is a web application built with Next.js that allows users to take photos, add fun overlays using Nouns, and manage these images with integrated wallet connections. This project was created for ETHGlobal 2024, and features a gallery displaying all uploaded images linked to the users' wallets.
 
+Walrus aggregator and publisher was down during development, so we couldn't store the images taken by the users and show the images in the gallery. 
+
 ## Features
 
 - **Take a Photo**: Users can take a photo directly from the app.
@@ -26,7 +28,6 @@ TODO: [Insert demo video link here]
 
 Given more time, we would integrate the following features:
 
-- **Wallet Integration for Sign-In**: Allow users to sign in with their wallets when taking photos, so that each image in the gallery can display the wallet (and ENS) that uploaded it.
 - **Supabase Integration**: Use Supabase to store and manage:
   - Blob IDs for images hosted on Walrus.
   - Wallet addresses and ENS names of users who uploaded photos.
