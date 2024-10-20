@@ -28,7 +28,7 @@ export default function Home() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          footer
+          made with love
         </a>
       </footer>
     </div>
