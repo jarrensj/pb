@@ -156,9 +156,13 @@ export default function PhotoBooth() {
       const canvas = canvasRef.current;
       const context = canvas.getContext('2d');
       if (context && image) {
-        // Use the stored image dimensions
-        canvas.width = imageDimensions.width;
-        canvas.height = imageDimensions.height;
+        // Get the displayed image dimensions
+        const displayedImage = document.querySelector('.relative.aspect-video img') as HTMLImageElement;
+        if (!displayedImage) return;
+
+        // Calculate scale factors
+        const scaleX = canvas.width / displayedImage.width;
+        const scaleY = canvas.height / displayedImage.height;
 
         // Clear the canvas
         context.clearRect(0, 0, canvas.width, canvas.height);
@@ -175,12 +179,15 @@ export default function PhotoBooth() {
               const overlayImg = new window.Image();
               overlayImg.src = overlay.src;
               overlayImg.onload = () => {
-                context.drawImage(overlayImg, overlay.position.x, overlay.position.y, 64, 64);
+                const scaledX = overlay.position.x * scaleX;
+                const scaledY = overlay.position.y * scaleY;
+                // Keep the overlay size constant (64x64)
+                context.drawImage(overlayImg, scaledX, scaledY, 64, 64);
               };
             } else if (overlay.text) {
-              context.font = '20px Arial';
+              context.font = '20px Arial'; // Keep font size constant
               context.fillStyle = 'white';
-              context.fillText(overlay.text, overlay.position.x, overlay.position.y);
+              context.fillText(overlay.text, overlay.position.x * scaleX, overlay.position.y * scaleY);
             }
           });
 
