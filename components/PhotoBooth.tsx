@@ -278,7 +278,7 @@ export default function PhotoBooth() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6">
+    <div className="flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-4xl mb-6">
         <h2 className="text-xl font-semibold mb-4 text-gray-800">Connect wallet to add ENS overlay</h2>
         <ConnectWallet />

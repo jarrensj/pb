@@ -17,7 +17,7 @@ export default function Home() {
                 </p>
           </div>
         </div>
-        <div className="w-full mx-automax-w-4xl">
+        <div className="w-full mx-auto max-w-4xl">
         <PhotoBooth />
         </div>
       </main>
