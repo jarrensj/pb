@@ -38,9 +38,6 @@ export default function PhotoBooth() {
   const { address } = useAccount();
   const { data: ensName } = useEnsName({ address });
 
-  console.log(address);
-  console.log(ensName);
-
   useEffect(() => {
     if (cameraActive) {
       startCamera();
