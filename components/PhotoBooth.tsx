@@ -263,6 +263,11 @@ export default function PhotoBooth() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6">
+      <div className="w-full max-w-4xl mb-6">
+        <h2 className="text-xl font-semibold mb-4 text-gray-800">Connect wallet to add ENS overlay</h2>
+        <ConnectWallet />
+      </div>
+
       <div className="w-full max-w-4xl flex flex-col md:flex-row items-start justify-center gap-6">
         <Card className="w-full max-w-md shadow-lg">
           <CardContent className="p-6">
@@ -436,9 +441,6 @@ export default function PhotoBooth() {
           </Card>
         )}
       </div>
-
-      <p className="mt-6 mb-6">Wallet:</p>
-      <ConnectWallet />
 
       <canvas
         ref={canvasRef}
