@@ -329,6 +329,7 @@ export default function PhotoBooth() {
         )}
       </div>
 
+        <p className='mt-6 mb-6'>Wallet:</p>
       <ConnectWallet />
 
       <canvas ref={canvasRef} style={{ display: 'none' }} width={640} height={480} />
