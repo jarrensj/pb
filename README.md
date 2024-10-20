@@ -27,11 +27,11 @@ TODO: [Insert demo video link here]
 Given more time, we would integrate the following features:
 - **Resize and Rotate Overlays**: Allow users to resize the overlays. 
 - **Wallet Integration for Sign-In**: Allow users to sign in with their wallets when taking photos, so that each image in the gallery can display the wallet (and ENS) that uploaded it.
-- **Supabase Integration**: Use Supabase to store and manage:
+- **Supabase Integration**: Use Supabase to record blob IDs to pull images from Walrus:
   - Blob IDs for images hosted on Walrus.
-  - Wallet addresses and ENS names of users who uploaded photos.
+  - Wallet addresses / ENS names of users who uploaded photos.
   - Timestamps (`created_at`) for each uploaded image.
-  - Event ID (`eth global 2024`).
+  - Event ID (`eth-global-sf-2024`).
 
 ## Known Issues
 
