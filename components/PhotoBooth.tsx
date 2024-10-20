@@ -12,6 +12,7 @@ import { useAccount, useEnsName } from 'wagmi'
 const overlayImages = [
   { id: 1, src: '/NounsBlackGlasses.png', name: 'Black Glasses' },
   { id: 2, src: '/NounsWatermelonGlasses.png', name: 'Watermelon Glasses' },
+  { id: 3, src: '/NounsBananaHat.png', name: 'Banana Hat' },
 ]
 
 interface Overlay {
