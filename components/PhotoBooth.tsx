@@ -207,122 +207,126 @@ export default function PhotoBooth() {
   };
 
   return (
-    <div className="relative flex flex-col md:flex-row items-start gap-4 p-4">
-      <ConnectWallet />
-
-      <Card className="w-full max-w-md mx-auto">
-        <CardContent className="p-6">
-          <div className="space-y-4">
-            <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
-              {cameraActive ? (
-                <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
-              ) : image ? (
-                <Image
-                  src={image}
-                  alt="Preview"
-                  layout="fill"
-                  objectFit="cover"
-                />
-              ) : (
-                <div className="flex items-center justify-center h-full">
-                  <Camera className="w-12 h-12 text-gray-400" />
-                </div>
-              )}
-              
-              {overlays.map((overlay) => (
-                <Draggable
-                  key={overlay.id}
-                  position={overlay.position}
-                  onStop={(e, data) => {
-                    const updatedOverlays = overlays.map(o =>
-                      o.id === overlay.id ? { ...o, position: { x: data.x, y: data.y } } : o
-                    )
-                    setOverlays(updatedOverlays)
-                  }}
-                  bounds="parent"
-                >
-                  <div className="absolute cursor-move">
-                    {overlay.src ? (
-                      <Image src={overlay.src} alt={`Overlay ${overlay.id}`} width={64} height={64} />
-                    ) : (
-                      <div style={{ color: 'white', fontSize: '20px' }}>{overlay.text}</div>
-                    )}
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-indigo-100 flex flex-col items-center justify-center p-6">
+      <div className="w-full max-w-4xl flex flex-col md:flex-row items-start justify-center gap-6">
+        <Card className="w-full max-w-md shadow-lg">
+          <CardContent className="p-6">
+            <div className="space-y-4">
+              <div className="relative aspect-video bg-gray-800 rounded-lg overflow-hidden shadow-inner">
+                {cameraActive ? (
+                  <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
+                ) : image ? (
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={image}
+                      alt="Preview"
+                      layout="fill"
+                      objectFit="cover"
+                      className="rounded-lg"
+                    />
+                    {overlays.map((overlay) => (
+                      <Draggable
+                        key={overlay.id}
+                        position={overlay.position}
+                        onStop={(e, data) => {
+                          const updatedOverlays = overlays.map(o =>
+                            o.id === overlay.id ? { ...o, position: { x: data.x, y: data.y } } : o
+                          )
+                          setOverlays(updatedOverlays)
+                        }}
+                        bounds="parent"
+                      >
+                        <div className="absolute cursor-move">
+                          {overlay.src ? (
+                            <Image src={overlay.src} alt={`Overlay ${overlay.id}`} width={64} height={64} />
+                          ) : (
+                            <div style={{ color: 'white', fontSize: '20px', textShadow: '1px 1px 2px rgba(0,0,0,0.8)' }}>{overlay.text}</div>
+                          )}
+                        </div>
+                      </Draggable>
+                    ))}
                   </div>
-                </Draggable>
-              ))}
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {cameraActive ? (
-                <Button onClick={takePicture}>Take Picture</Button>
-              ) : (
-                <Button onClick={() => setCameraActive(true)}>
-                  {image ? 'Take New Photo' : 'Start Camera'}
-                </Button>
-              )}
-              {image && (
-                <>
-                  <Button onClick={copyImage} className="relative">
-                    {copyFeedback ? (
-                      <Check className="w-4 h-4 mr-2 text-green-500" />
-                    ) : (
-                      <Copy className="w-4 h-4 mr-2" />
-                    )}
-                    {copyFeedback ? 'Copied!' : 'Copy'}
+                ) : (
+                  <div className="flex items-center justify-center h-full">
+                    <Camera className="w-16 h-16 text-gray-400" />
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-wrap justify-center gap-2">
+                {cameraActive ? (
+                  <Button onClick={takePicture} className="bg-green-500 hover:bg-green-600 text-white">Take Picture</Button>
+                ) : (
+                  <Button onClick={() => setCameraActive(true)} className="bg-blue-500 hover:bg-blue-600 text-white">
+                    {image ? 'Take New Photo' : 'Start Camera'}
                   </Button>
-                  <Button onClick={downloadImage} className="relative">
-                    {downloadFeedback ? (
-                      <Check className="w-4 h-4 mr-2 text-green-500" />
-                    ) : (
-                      <Download className="w-4 h-4 mr-2" />
-                    )}
-                    {downloadFeedback ? 'Downloaded!' : 'Download'}
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {image && (
-        <Card className="mt-4 md:mt-0">
-          <CardContent className="p-4">
-            <h2 className="text-lg font-semibold mb-2">Overlays</h2>
-            <div className="grid grid-cols-2 gap-2">
-              {overlayImages.map(overlay => (
-                <Button
-                  key={overlay.id}
-                  variant="outline"
-                  className="w-full h-16 p-2"
-                  onClick={() => addOverlay(overlay.src)}
-                >
-                  <Image src={overlay.src} alt={overlay.name} width={48} height={48} />
-                </Button>
-              ))}
-              {ensName && (
-                <Button
-                  variant="outline"
-                  className="w-full h-16 p-2"
-                  onClick={() => addOverlay(undefined, ensName)}
-                >
-                  {ensName} 
-                </Button>
-              )}
-            </div>
-            <h2 className="text-lg font-semibold mt-4 mb-2">Current Overlays</h2>
-            <div className="space-y-2">
-              {overlays.map((overlay) => (
-                <div key={overlay.id} className="flex items-center justify-between">
-                  <span>{overlay.src ? overlay.src.split('/').pop() : overlay.text}</span>
-                  <Button variant="ghost" onClick={() => removeOverlay(overlay.id)}>
-                    <XCircle className="w-5 h-5 text-red-500" />
-                  </Button>
-                </div>
-              ))}
+                )}
+                {image && (
+                  <>
+                    <Button onClick={copyImage} className="relative bg-purple-500 hover:bg-purple-600 text-white">
+                      {copyFeedback ? (
+                        <Check className="w-4 h-4 mr-2 text-green-300" />
+                      ) : (
+                        <Copy className="w-4 h-4 mr-2" />
+                      )}
+                      {copyFeedback ? 'Copied!' : 'Copy'}
+                    </Button>
+                    <Button onClick={downloadImage} className="relative bg-indigo-500 hover:bg-indigo-600 text-white">
+                      {downloadFeedback ? (
+                        <Check className="w-4 h-4 mr-2 text-green-300" />
+                      ) : (
+                        <Download className="w-4 h-4 mr-2" />
+                      )}
+                      {downloadFeedback ? 'Downloaded!' : 'Download'}
+                    </Button>
+                  </>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>
-      )}
+
+        {image && (
+          <Card className="w-full max-w-xs shadow-lg">
+            <CardContent className="p-4">
+              <h2 className="text-xl font-semibold mb-4 text-gray-800">Overlays</h2>
+              <div className="grid grid-cols-2 gap-3">
+                {overlayImages.map(overlay => (
+                  <Button
+                    key={overlay.id}
+                    variant="outline"
+                    className="w-full h-16 p-2 bg-white hover:bg-gray-100 transition-colors duration-200"
+                    onClick={() => addOverlay(overlay.src)}
+                  >
+                    <Image src={overlay.src} alt={overlay.name} width={48} height={48} />
+                  </Button>
+                ))}
+                {ensName && (
+                  <Button
+                    variant="outline"
+                    className="w-full h-16 p-2 bg-white hover:bg-gray-100 transition-colors duration-200"
+                    onClick={() => addOverlay(undefined, ensName)}
+                  >
+                    <span className="text-sm font-medium text-gray-700">{ensName}</span>
+                  </Button>
+                )}
+              </div>
+              <h2 className="text-xl font-semibold mt-6 mb-3 text-gray-800">Current Overlays</h2>
+              <div className="space-y-2">
+                {overlays.map((overlay) => (
+                  <div key={overlay.id} className="flex items-center justify-between bg-white p-2 rounded-md shadow">
+                    <span className="text-sm text-gray-600">{overlay.src ? overlay.src.split('/').pop() : overlay.text}</span>
+                    <Button variant="ghost" onClick={() => removeOverlay(overlay.id)} className="hover:bg-red-100">
+                      <XCircle className="w-5 h-5 text-red-500" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+
+      <ConnectWallet />
 
       <canvas ref={canvasRef} style={{ display: 'none' }} width={640} height={480} />
     </div>
