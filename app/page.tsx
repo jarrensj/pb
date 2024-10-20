@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import PhotoBooth from "../components/PhotoBooth";
 
 export default function Home() {
