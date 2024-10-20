@@ -35,4 +35,4 @@ Given more time, we would integrate the following features:
 
 ## Known Issues
 
-Our main issue during development was time constraints. Some features such as full wallet integration with signing and gallery organization could not be completed within the project timeline.
+Our main issue during development was time. 
