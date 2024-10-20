@@ -38,6 +38,9 @@ export default function PhotoBooth() {
   const { address } = useAccount();
   const { data: ensName } = useEnsName({ address });
 
+  console.log(address);
+  console.log(ensName);
+
   useEffect(() => {
     if (cameraActive) {
       startCamera();
@@ -68,7 +71,7 @@ export default function PhotoBooth() {
   const uploadImage = async (imageDataUrl: string) => {
     if (imageDataUrl) {
       console.log("Uploading image to server...");
-      const response = await fetch("/api/upload", {
+      await fetch("/api/upload", {
         method: "PUT",
         body: imageDataUrl,
       });
