@@ -9,9 +9,8 @@ Walrus aggregator and publisher was down during development, so we couldn't stor
 - **Take a Photo**: Users can take a photo directly from the app.
 - **Add and Drag Overlays**: Fun overlays, including Nouns glasses and their ENS, can be added and positioned over the photo.
 - **Connect Wallet & ENS Overlay**: Users can connect their crypto wallet and drag an ENS overlay onto the photo.
-- **Overlay Management**: Users can delete existing overlays.
-- **User Feedback**: Notifications appear when users copy or download their photos.
-- **Gallery Page**: A gallery (/gallery) shows all photos uploaded by users.
+- **Overlay Management**: Users can view and delete existing overlays.
+- **Gallery Page**: A gallery page (/gallery) shows all photos uploaded by users.
 
 ## Technologies Used
 
