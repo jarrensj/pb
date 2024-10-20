@@ -38,8 +38,6 @@ export default function PhotoBooth() {
   const { address } = useAccount();
   const { data: ensName } = useEnsName({ address });
 
-  console.log(ensName);
-
   useEffect(() => {
     if (cameraActive) {
       startCamera();
@@ -67,7 +65,18 @@ export default function PhotoBooth() {
     }
   };
 
-  const takePicture = () => {
+  const uploadImage = async (imageDataUrl: string) => {
+    if (imageDataUrl) {
+      console.log("Uploading image to server...");
+      const response = await fetch("/api/upload", {
+        method: "PUT",
+        body: imageDataUrl,
+      });
+      console.log("Image uploaded to server:");
+    }
+  };
+
+  const takePicture = async () => {
     if (canvasRef.current && videoRef.current) {
       const context = canvasRef.current.getContext("2d");
       if (context) {
@@ -87,6 +96,7 @@ export default function PhotoBooth() {
           width: canvasRef.current.width,
           height: canvasRef.current.height,
         });
+        await uploadImage(imageDataUrl);
         setCameraActive(false);
       }
     }
