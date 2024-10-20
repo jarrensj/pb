@@ -32,7 +32,6 @@ Given more time, we would integrate the following features:
 - **Supabase Integration**: Use Supabase to store and manage:
 =======
 - **Resize and Rotate Overlays**: Allow users to resize the overlays. 
-- **Wallet Integration for Sign-In**: Allow users to sign in with their wallets when taking photos, so that each image in the gallery can display the wallet (and ENS) that uploaded it.
 - **Supabase Integration**: Use Supabase to record blob IDs to pull images from Walrus:
 >>>>>>> main
   - Blob IDs for images hosted on Walrus.
