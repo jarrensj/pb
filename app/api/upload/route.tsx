@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 export async function PUT(request: Request) {
     /**
      * Cannot fully implement due to walrus aggregator/publisher being down
+     * TODO: Implement image upload to walrus
      * qdr_tech @ 2024-10-20 4:30pm
      */
   console.log('API route called: /api/upload');
