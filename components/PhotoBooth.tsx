@@ -29,6 +29,7 @@ export default function PhotoBooth() {
   const [overlays, setOverlays] = useState<Overlay[]>([])
   const [copyFeedback, setCopyFeedback] = useState(false)
   const [downloadFeedback, setDownloadFeedback] = useState(false)
+  const [imageDimensions, setImageDimensions] = useState({ width: 640, height: 480 });
 
   const { address } = useAccount()
   const { data: ensName } = useEnsName({ address })
@@ -62,12 +63,16 @@ export default function PhotoBooth() {
 
   const takePicture = () => {
     if (canvasRef.current && videoRef.current) {
-      const context = canvasRef.current.getContext('2d')
+      const context = canvasRef.current.getContext('2d');
       if (context) {
-        context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height)
-        const imageDataUrl = canvasRef.current.toDataURL('image/png')
-        setImage(imageDataUrl)
-        setCameraActive(false)
+        // Set canvas dimensions to match video
+        canvasRef.current.width = videoRef.current.videoWidth;
+        canvasRef.current.height = videoRef.current.videoHeight;
+        context.drawImage(videoRef.current, 0, 0, canvasRef.current.width, canvasRef.current.height);
+        const imageDataUrl = canvasRef.current.toDataURL('image/png');
+        setImage(imageDataUrl);
+        setImageDimensions({ width: canvasRef.current.width, height: canvasRef.current.height });
+        setCameraActive(false);
       }
     }
   }
@@ -76,6 +81,8 @@ export default function PhotoBooth() {
     if (canvasRef.current && image) {
       const context = canvasRef.current.getContext('2d')
       if (context) {
+        canvasRef.current.width = imageDimensions.width;
+        canvasRef.current.height = imageDimensions.height;
         // clear canvas
         context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
 
@@ -104,7 +111,7 @@ export default function PhotoBooth() {
         }
       }
     }
-  }, [image, overlays])
+  }, [image, overlays, imageDimensions])
 
   const addOverlay = (src?: string, text?: string) => {
     setOverlays([...overlays, { id: Date.now(), src, text, position: { x: 0, y: 0 } }])
@@ -145,14 +152,52 @@ export default function PhotoBooth() {
   }
 
   const downloadFromCanvas = () => {
-    const newImageData = canvasRef.current!.toDataURL('image/png')
-    const link = document.createElement('a')
-    link.href = newImageData
-    link.download = 'image.png'
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-  }
+    if (canvasRef.current) {
+      const canvas = canvasRef.current;
+      const context = canvas.getContext('2d');
+      if (context && image) {
+        // Use the stored image dimensions
+        canvas.width = imageDimensions.width;
+        canvas.height = imageDimensions.height;
+
+        // Clear the canvas
+        context.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw the base image
+        const img = new window.Image();
+        img.src = image;
+        img.onload = () => {
+          context.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+          // Draw overlays
+          overlays.forEach((overlay) => {
+            if (overlay.src) {
+              const overlayImg = new window.Image();
+              overlayImg.src = overlay.src;
+              overlayImg.onload = () => {
+                context.drawImage(overlayImg, overlay.position.x, overlay.position.y, 64, 64);
+              };
+            } else if (overlay.text) {
+              context.font = '20px Arial';
+              context.fillStyle = 'white';
+              context.fillText(overlay.text, overlay.position.x, overlay.position.y);
+            }
+          });
+
+          // After all overlays are drawn, create and trigger download
+          setTimeout(() => {
+            const dataUrl = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = 'photo_booth_image.png';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }, 100); // Small delay to ensure all overlays are drawn
+        };
+      }
+    }
+  };
 
   return (
     <div className="relative flex flex-col md:flex-row items-start gap-4 p-4">
