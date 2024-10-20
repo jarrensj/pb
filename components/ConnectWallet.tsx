@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 const ConnectWallet = () => {
   const [isClient, setIsClient] = useState(false)
-  const { address, isConnecting, isDisconnected } = useAccount();
+  const { isConnecting, isDisconnected } = useAccount();
 
   useEffect(() => {
     setIsClient(true)
