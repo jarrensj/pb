@@ -3,14 +3,27 @@
 import { useState, useRef, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Camera, Copy, Download } from 'lucide-react'
+import { Camera, Copy, Download, XCircle } from 'lucide-react'
 import Image from 'next/image'
+import Draggable from 'react-draggable'
+
+const overlayImages = [
+  { id: 1, src: '/NounsBlackGlasses.png', name: 'Black Glasses' },
+  { id: 2, src: '/NounsWatermelonGlasses.png', name: 'Watermelon Glasses' },
+]
+
+interface Overlay {
+  id: number
+  src: string
+  position: { x: number; y: number }
+}
 
 export default function PhotoBooth() {
   const videoRef = useRef<HTMLVideoElement>(null)
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const [image, setImage] = useState<string | null>(null)
   const [cameraActive, setCameraActive] = useState(false)
+  const [overlays, setOverlays] = useState<Overlay[]>([])
 
   useEffect(() => {
     if (cameraActive) {
@@ -51,76 +64,174 @@ export default function PhotoBooth() {
     }
   }
 
+  useEffect(() => {
+    if (canvasRef.current && image) {
+      const context = canvasRef.current.getContext('2d')
+      if (context) {
+        // clear canvas
+        context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height)
+
+        const img = new window.Image()
+        img.src = image
+        img.onload = () => {
+          // main image
+          if (canvasRef.current) {
+            context.drawImage(img, 0, 0, canvasRef.current.width, canvasRef.current.height)
+          }
+
+          // apply overlays
+          overlays.forEach((overlay) => {
+            const overlayImg = new window.Image()
+            overlayImg.src = overlay.src
+            overlayImg.onload = () => {
+              context.drawImage(overlayImg, overlay.position.x, overlay.position.y, 64, 64)
+            }
+          })
+        }
+      }
+    }
+  }, [image, overlays])
+
   const copyImage = async () => {
     if (image) {
-      try {
-        const blob = await fetch(image).then(res => res.blob())
-        await navigator.clipboard.write([
-          new ClipboardItem({
-            [blob.type]: blob
-          })
-        ])
-      } catch (err) {
-        console.error('Failed to copy image:', err)
-      }
+      await copyToClipboard()
+    }
+  }
+
+  const copyToClipboard = async () => {
+    const newImageData = canvasRef.current!.toDataURL('image/png')
+    try {
+      const blob = await fetch(newImageData).then(res => res.blob())
+      await navigator.clipboard.write([
+        new ClipboardItem({
+          [blob.type]: blob
+        })
+      ])
+    } catch (err) {
+      console.error('Failed to copy image:', err)
     }
   }
 
   const downloadImage = () => {
     if (image) {
-      const link = document.createElement('a')
-      link.href = image
-      link.download = 'image.png'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
+     downloadFromCanvas()
     }
   }
 
+  const downloadFromCanvas = () => {
+    const newImageData = canvasRef.current!.toDataURL('image/png')
+    const link = document.createElement('a')
+    link.href = newImageData
+    link.download = 'image.png'
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+  }
+
+  const addOverlay = (src: string) => {
+    setOverlays([...overlays, { id: Date.now(), src, position: { x: 0, y: 0 } }])
+  }
+
+  const removeOverlay = (id: number) => {
+    setOverlays(overlays.filter(overlay => overlay.id !== id))
+  }
+
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardContent className="p-6">
-        <div className="space-y-4">
-          <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
-            {cameraActive ? (
-              <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
-            ) : image ? (
-              <Image
-                src={image}
-                alt="Preview"
-                layout="fill"
-                objectFit="cover"
-              />
-            ) : (
-              <div className="flex items-center justify-center h-full">
-                <Camera className="w-12 h-12 text-gray-400" />
-              </div>
-            )}
-          </div>
-          <div className="flex justify-between">
-            {cameraActive ? (
-              <Button onClick={takePicture}>Take Picture</Button>
-            ) : (
-              <Button onClick={() => setCameraActive(true)}>
-                {image ? 'Take New Photo' : 'Start Camera'}
-              </Button>
-            )}
-            {image && (
-              <>
-                <Button onClick={copyImage}>
-                  <Copy className="w-4 h-4 mr-2" />
-                  Copy
+    <div className="relative flex flex-col md:flex-row items-start gap-4 p-4">
+      <Card className="w-full max-w-md mx-auto">
+        <CardContent className="p-6">
+          <div className="space-y-4">
+            <div className="relative aspect-video bg-gray-100 rounded-lg overflow-hidden">
+              {cameraActive ? (
+                <video ref={videoRef} autoPlay playsInline className="w-full h-full object-cover" />
+              ) : image ? (
+                <Image
+                  src={image}
+                  alt="Preview"
+                  layout="fill"
+                  objectFit="cover"
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <Camera className="w-12 h-12 text-gray-400" />
+                </div>
+              )}
+              
+              {overlays.map((overlay) => (
+                <Draggable
+                  key={overlay.id}
+                  position={overlay.position}
+                  onStop={(e, data) => {
+                    const updatedOverlays = overlays.map(o =>
+                      o.id === overlay.id ? { ...o, position: { x: data.x, y: data.y } } : o
+                    )
+                    setOverlays(updatedOverlays)
+                  }}
+                  bounds="parent"
+                >
+                  <div className="absolute cursor-move">
+                    <Image src={overlay.src} alt={`Overlay ${overlay.id}`} width={64} height={64} />
+                  </div>
+                </Draggable>
+              ))}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {cameraActive ? (
+                <Button onClick={takePicture}>Take Picture</Button>
+              ) : (
+                <Button onClick={() => setCameraActive(true)}>
+                  {image ? 'Take New Photo' : 'Start Camera'}
                 </Button>
-                <Button onClick={downloadImage}>
-                  <Download className="w-4 h-4 mr-2" />
-                  Download
-                </Button>
-              </>
-            )}
+              )}
+              {image && (
+                <>
+                  <Button onClick={copyImage}>
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy
+                  </Button>
+                  <Button onClick={downloadImage}>
+                    <Download className="w-4 h-4 mr-2" />
+                    Download
+                  </Button>
+                </>
+              )}
+            </div>
           </div>
-        </div>
-      </CardContent>
+        </CardContent>
+      </Card>
+
+      {image && (
+        <Card className="mt-4 md:mt-0">
+          <CardContent className="p-4">
+            <h2 className="text-lg font-semibold mb-2">Overlays</h2>
+            <div className="grid grid-cols-2 gap-2">
+              {overlayImages.map(overlay => (
+                <Button
+                  key={overlay.id}
+                  variant="outline"
+                  className="w-full h-16 p-2"
+                  onClick={() => addOverlay(overlay.src)}
+                >
+                  <Image src={overlay.src} alt={overlay.name} width={48} height={48} />
+                </Button>
+              ))}
+            </div>
+            <h2 className="text-lg font-semibold mt-4 mb-2">Current Overlays</h2>
+            <div className="space-y-2">
+              {overlays.map((overlay) => (
+                <div key={overlay.id} className="flex items-center justify-between">
+                  <span>{overlay.src.split('/').pop()}</span>
+                  <Button variant="ghost" onClick={() => removeOverlay(overlay.id)}>
+                    <XCircle className="w-5 h-5 text-red-500" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <canvas ref={canvasRef} style={{ display: 'none' }} width={640} height={480} />
-    </Card>
+    </div>
   )
 }
