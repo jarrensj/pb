@@ -1,36 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Creating a markdown file with the content of the README
+readme_content = """
+# Photo Booth
 
-## Getting Started
+Photo Booth is a web application built with Next.js that allows users to take photos, add fun overlays using Nouns, and manage these images with integrated wallet connections. This project was created for an event, and features a gallery displaying all uploaded images linked to the users' wallets.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- **Take a Photo**: Users can take a photo directly from the app.
+- **Add and Drag Overlays**: Fun overlays, including Nouns, can be added and positioned over the photo.
+- **Connect Wallet & ENS Overlay**: Users can connect their crypto wallet and drag an ENS overlay onto the photo.
+- **Overlay Management**: Users can delete existing overlays.
+- **User Feedback**: Notifications appear when users copy or download their photos.
+- **Gallery Page**: A gallery (/gallery) shows all photos uploaded by users, associated with their connected wallets for the event.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Technologies Used
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Next.js**: The primary framework used to build the app.
+- **Nouns**: Incorporated as fun overlays.
+- **Walrus**: Used for hosting images taken by users. The site is also hosted on Walrus (if applicable).
+- **Connect Kit**: Handles wallet connections for users.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Demo
 
-## Learn More
+[Insert demo video link here]
 
-To learn more about Next.js, take a look at the following resources:
+## Future Improvements
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Given more time, we would integrate the following features:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Wallet Integration for Sign-In**: Allow users to sign in with their wallets when taking photos, so that each image in the gallery can display the wallet (and ENS) that uploaded it.
+- **Supabase Integration**: Use Supabase to store and manage:
+  - Blob IDs for images hosted on Walrus.
+  - Wallet addresses and ENS names of users who uploaded photos.
+  - Timestamps (`created_at`) for each uploaded image.
+  - Event ID (`eth global 2024`).
 
-## Deploy on Vercel
+## Known Issues
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Our main issue during development was time constraints. Some features such as full wallet integration with signing and gallery organization could not be completed within the project timeline.
+"""
