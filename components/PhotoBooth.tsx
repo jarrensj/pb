@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Camera, Copy, Download, XCircle } from 'lucide-react'
+import { Camera, Copy, Download, XCircle, Check } from 'lucide-react'
 import Image from 'next/image'
 import Draggable from 'react-draggable'
 
@@ -24,6 +24,8 @@ export default function PhotoBooth() {
   const [image, setImage] = useState<string | null>(null)
   const [cameraActive, setCameraActive] = useState(false)
   const [overlays, setOverlays] = useState<Overlay[]>([])
+  const [copyFeedback, setCopyFeedback] = useState(false)
+  const [downloadFeedback, setDownloadFeedback] = useState(false)
 
   useEffect(() => {
     if (cameraActive) {
@@ -95,6 +97,8 @@ export default function PhotoBooth() {
   const copyImage = async () => {
     if (image) {
       await copyToClipboard()
+      setCopyFeedback(true)
+      setTimeout(() => setCopyFeedback(false), 2000)
     }
   }
 
@@ -114,7 +118,9 @@ export default function PhotoBooth() {
 
   const downloadImage = () => {
     if (image) {
-     downloadFromCanvas()
+      downloadFromCanvas()
+      setDownloadFeedback(true)
+      setTimeout(() => setDownloadFeedback(false), 2000)
     }
   }
 
@@ -185,13 +191,21 @@ export default function PhotoBooth() {
               )}
               {image && (
                 <>
-                  <Button onClick={copyImage}>
-                    <Copy className="w-4 h-4 mr-2" />
-                    Copy
+                  <Button onClick={copyImage} className="relative">
+                    {copyFeedback ? (
+                      <Check className="w-4 h-4 mr-2 text-green-500" />
+                    ) : (
+                      <Copy className="w-4 h-4 mr-2" />
+                    )}
+                    {copyFeedback ? 'Copied!' : 'Copy'}
                   </Button>
-                  <Button onClick={downloadImage}>
-                    <Download className="w-4 h-4 mr-2" />
-                    Download
+                  <Button onClick={downloadImage} className="relative">
+                    {downloadFeedback ? (
+                      <Check className="w-4 h-4 mr-2 text-green-500" />
+                    ) : (
+                      <Download className="w-4 h-4 mr-2" />
+                    )}
+                    {downloadFeedback ? 'Downloaded!' : 'Download'}
                   </Button>
                 </>
               )}
