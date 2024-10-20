@@ -35,6 +35,8 @@ export default function PhotoBooth() {
   const { address } = useAccount()
   const { data: ensName } = useEnsName({ address })
 
+  console.log(ensName);
+
   useEffect(() => {
     if (cameraActive) {
       startCamera()
@@ -208,7 +210,7 @@ export default function PhotoBooth() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-100 to-indigo-100 flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-4xl flex flex-col md:flex-row items-start justify-center gap-6">
         <Card className="w-full max-w-md shadow-lg">
           <CardContent className="p-6">
