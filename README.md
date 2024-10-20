@@ -27,13 +27,8 @@ TODO: [Insert demo video link here]
 ## Future Improvements
 
 Given more time, we would integrate the following features:
-<<<<<<< feature/update-readme
-
-- **Supabase Integration**: Use Supabase to store and manage:
-=======
 - **Resize and Rotate Overlays**: Allow users to resize the overlays. 
 - **Supabase Integration**: Use Supabase to record blob IDs to pull images from Walrus:
->>>>>>> main
   - Blob IDs for images hosted on Walrus.
   - Wallet addresses / ENS names of users who uploaded photos.
   - Timestamps (`created_at`) for each uploaded image.
