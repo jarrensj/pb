@@ -8,6 +8,7 @@ import Image from "next/image";
 import Draggable from "react-draggable";
 import ConnectWallet from "./ConnectWallet";
 import { useAccount, useEnsName } from "wagmi";
+import JSConfetti from 'js-confetti'; 
 
 const overlayImages = [
   { id: 1, src: "/NounsBlackGlasses.png", name: "Black Glasses" },
@@ -34,9 +35,17 @@ export default function PhotoBooth() {
     width: 640,
     height: 480,
   });
+  const jsConfettiRef = useRef<JSConfetti | null>(null);
 
   const { address } = useAccount();
   const { data: ensName } = useEnsName({ address });
+
+  useEffect(() => {
+    jsConfettiRef.current = new JSConfetti();
+    return () => {
+      jsConfettiRef.current = null;
+    };
+  }, []);
 
   useEffect(() => {
     if (cameraActive) {
@@ -77,6 +86,13 @@ export default function PhotoBooth() {
   };
 
   const takePicture = async () => {
+    if (jsConfettiRef.current) {
+      jsConfettiRef.current.addConfetti({
+        emojis: ['📷'],
+        emojiSize: 100,
+        confettiNumber: 24,
+      });
+    }
     if (canvasRef.current && videoRef.current) {
       const context = canvasRef.current.getContext("2d");
       if (context) {
