@@ -94,11 +94,38 @@ export default function PhotoBooth() {
     }
   }, [image, overlays])
 
+  const uploadImage = async () => {
+    if (!canvasRef.current) return;
+    
+    const imageDataUrl = canvasRef.current.toDataURL('image/png');
+    try {
+      const blob = await fetch(imageDataUrl).then(res => res.blob());
+      
+      const response = await fetch('/api/upload', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/octet-stream',
+        },
+        body: blob,
+      });
+
+      if (!response.ok) {
+        console.error('Failed to upload image:', response.statusText);
+      } else {
+        const result = await response.json();
+        console.log('Image uploaded successfully', result);
+      }
+    } catch (err) {
+      console.error('Error uploading image:', err);
+    }
+  };
+
   const copyImage = async () => {
     if (image) {
-      await copyToClipboard()
-      setCopyFeedback(true)
-      setTimeout(() => setCopyFeedback(false), 2000)
+      await copyToClipboard();
+      await uploadImage();
+      setCopyFeedback(true);
+      setTimeout(() => setCopyFeedback(false), 2000);
     }
   }
 
@@ -118,9 +145,10 @@ export default function PhotoBooth() {
 
   const downloadImage = () => {
     if (image) {
-      downloadFromCanvas()
-      setDownloadFeedback(true)
-      setTimeout(() => setDownloadFeedback(false), 2000)
+      downloadFromCanvas();
+      uploadImage();
+      setDownloadFeedback(true);
+      setTimeout(() => setDownloadFeedback(false), 2000);
     }
   }
 
