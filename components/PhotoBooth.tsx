@@ -280,8 +280,10 @@ export default function PhotoBooth() {
   return (
     <div className="flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-4xl mb-6">
-        <h2 className="text-xl font-semibold mb-4 text-gray-800">Connect wallet to add ENS overlay</h2>
-        <ConnectWallet />
+        <h2 className="text-xl text-center font-semibold mb-4 text-gray-800">Connect wallet to add ENS overlay</h2>
+        <div className="flex justify-center">
+          <ConnectWallet />
+        </div>
       </div>
 
       <div className="w-full max-w-4xl flex flex-col md:flex-row items-start justify-center gap-6">
