@@ -1,8 +1,6 @@
-# Creating a markdown file with the content of the README
-readme_content = """
 # Photo Booth
 
-Photo Booth is a web application built with Next.js that allows users to take photos, add fun overlays using Nouns, and manage these images with integrated wallet connections. This project was created for an event, and features a gallery displaying all uploaded images linked to the users' wallets.
+Photo Booth is a web application built with Next.js that allows users to take photos, add fun overlays using Nouns, and manage these images with integrated wallet connections. This project was created for ETHGlobal 2024, and features a gallery displaying all uploaded images linked to the users' wallets.
 
 ## Features
 
@@ -17,12 +15,12 @@ Photo Booth is a web application built with Next.js that allows users to take ph
 
 - **Next.js**: The primary framework used to build the app.
 - **Nouns**: Incorporated as fun overlays.
-- **Walrus**: Used for hosting images taken by users. The site is also hosted on Walrus (if applicable).
+- **Walrus**: Used for hosting images taken by users, the site is also hosted on Walrus.
 - **Connect Kit**: Handles wallet connections for users.
 
 ## Demo
 
-[Insert demo video link here]
+TODO: [Insert demo video link here]
 
 ## Future Improvements
 
