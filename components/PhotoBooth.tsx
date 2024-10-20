@@ -6,6 +6,8 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Camera, Copy, Download, XCircle, Check } from 'lucide-react'
 import Image from 'next/image'
 import Draggable from 'react-draggable'
+import ConnectWallet from './ConnectWallet'
+import { useAccount, useEnsName } from 'wagmi'
 
 const overlayImages = [
   { id: 1, src: '/NounsBlackGlasses.png', name: 'Black Glasses' },
@@ -14,7 +16,8 @@ const overlayImages = [
 
 interface Overlay {
   id: number
-  src: string
+  src?: string
+  text?: string
   position: { x: number; y: number }
 }
 
@@ -26,6 +29,9 @@ export default function PhotoBooth() {
   const [overlays, setOverlays] = useState<Overlay[]>([])
   const [copyFeedback, setCopyFeedback] = useState(false)
   const [downloadFeedback, setDownloadFeedback] = useState(false)
+
+  const { address } = useAccount()
+  const { data: ensName } = useEnsName({ address })
 
   useEffect(() => {
     if (cameraActive) {
@@ -83,16 +89,30 @@ export default function PhotoBooth() {
 
           // apply overlays
           overlays.forEach((overlay) => {
-            const overlayImg = new window.Image()
-            overlayImg.src = overlay.src
-            overlayImg.onload = () => {
-              context.drawImage(overlayImg, overlay.position.x, overlay.position.y, 64, 64)
+            if (overlay.src) {
+              const overlayImg = new window.Image()
+              overlayImg.src = overlay.src
+              overlayImg.onload = () => {
+                context.drawImage(overlayImg, overlay.position.x, overlay.position.y, 64, 64)
+              }
+            } else if (overlay.text) {
+              context.font = '20px'
+              context.fillStyle = 'white'
+              context.fillText(overlay.text, overlay.position.x, overlay.position.y)
             }
           })
         }
       }
     }
   }, [image, overlays])
+
+  const addOverlay = (src?: string, text?: string) => {
+    setOverlays([...overlays, { id: Date.now(), src, text, position: { x: 0, y: 0 } }])
+  }
+
+  const removeOverlay = (id: number) => {
+    setOverlays(overlays.filter(overlay => overlay.id !== id))
+  }
 
   const copyImage = async () => {
     if (image) {
@@ -134,16 +154,10 @@ export default function PhotoBooth() {
     document.body.removeChild(link)
   }
 
-  const addOverlay = (src: string) => {
-    setOverlays([...overlays, { id: Date.now(), src, position: { x: 0, y: 0 } }])
-  }
-
-  const removeOverlay = (id: number) => {
-    setOverlays(overlays.filter(overlay => overlay.id !== id))
-  }
-
   return (
     <div className="relative flex flex-col md:flex-row items-start gap-4 p-4">
+      <ConnectWallet />
+
       <Card className="w-full max-w-md mx-auto">
         <CardContent className="p-6">
           <div className="space-y-4">
@@ -176,7 +190,11 @@ export default function PhotoBooth() {
                   bounds="parent"
                 >
                   <div className="absolute cursor-move">
-                    <Image src={overlay.src} alt={`Overlay ${overlay.id}`} width={64} height={64} />
+                    {overlay.src ? (
+                      <Image src={overlay.src} alt={`Overlay ${overlay.id}`} width={64} height={64} />
+                    ) : (
+                      <div style={{ color: 'white', fontSize: '20px' }}>{overlay.text}</div>
+                    )}
                   </div>
                 </Draggable>
               ))}
@@ -229,12 +247,21 @@ export default function PhotoBooth() {
                   <Image src={overlay.src} alt={overlay.name} width={48} height={48} />
                 </Button>
               ))}
+              {ensName && (
+                <Button
+                  variant="outline"
+                  className="w-full h-16 p-2"
+                  onClick={() => addOverlay(undefined, ensName)}
+                >
+                  {ensName} 
+                </Button>
+              )}
             </div>
             <h2 className="text-lg font-semibold mt-4 mb-2">Current Overlays</h2>
             <div className="space-y-2">
               {overlays.map((overlay) => (
                 <div key={overlay.id} className="flex items-center justify-between">
-                  <span>{overlay.src.split('/').pop()}</span>
+                  <span>{overlay.src ? overlay.src.split('/').pop() : overlay.text}</span>
                   <Button variant="ghost" onClick={() => removeOverlay(overlay.id)}>
                     <XCircle className="w-5 h-5 text-red-500" />
                   </Button>
