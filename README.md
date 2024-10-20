@@ -4,6 +4,8 @@ Photo Booth is a web application built with Next.js that allows users to take ph
 
 Walrus aggregator and publisher was down during development, so we couldn't store the images taken by the users and show the images in the gallery. 
 
+Walrus aggregator and publisher was down during development, so we couldn't store the images taken by the users and show the images in the gallery. 
+
 ## Features
 
 - **Take a Photo**: Users can take a photo directly from the app.
